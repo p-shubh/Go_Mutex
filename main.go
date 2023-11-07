@@ -1,4 +1,4 @@
-package main
+/* package main
 
 import (
 	"fmt"
@@ -11,7 +11,7 @@ type Project struct {
 	// Add other project fields here
 }
 
-func processRequest(projectID int, mu *sync.Mutex, projectMap map[int]*Project, projectCh map[int]chan struct{}) {
+ func processRequest(projectID int, mu *sync.Mutex, projectMap map[int]*Project, projectCh map[int]chan struct{}) {
 	mu.Lock()
 	if projectMap[projectID] == nil {
 		projectMap[projectID] = &Project{ID: projectID}
@@ -59,4 +59,47 @@ func main() {
 
 	// Keep the program running for demonstration purposes
 	select {}
+} */
+
+package main
+
+import (
+	"fmt"
+	"sync"
+	"time"
+)
+
+var projectLocks = make(map[int]*sync.Mutex)
+var lockMutex sync.Mutex
+
+func HandleProjectManagerDashboardInfoByProjectID(projectID int) {
+	lockMutex.Lock()
+	if _, exists := projectLocks[projectID]; !exists {
+		projectLocks[projectID] = &sync.Mutex{}
+	}
+	mutex := projectLocks[projectID]
+	lockMutex.Unlock()
+
+	mutex.Lock()
+	defer mutex.Unlock()
+
+	// Your code to handle the project dashboard info goes here
+	fmt.Printf("Handling project %d\n", projectID)
+	time.Sleep(2 * time.Second)
+}
+
+func main() {
+	// Simulate concurrent requests to the function with the same project ID
+	projectID := 1
+	for i := 1; i <= 2; i++ {
+		go HandleProjectManagerDashboardInfoByProjectID(projectID)
+	}
+
+	// Simulate requests to the function with different project IDs
+	for i := 1; i <= 2; i++ {
+		go HandleProjectManagerDashboardInfoByProjectID(i + 1)
+	}
+
+	// Wait for all goroutines to finish
+	time.Sleep(5 * time.Second)
 }
