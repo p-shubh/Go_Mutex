@@ -35,7 +35,7 @@ func HandleToCheckSaveEntriesInTaskStatusANDUpdateInProjectTasksCalculationAlgo(
 	fmt.Printf("Executing for task_id %d and sub_task_id %d\n", task_id, sub_task_id)
 }
 
-func CallToMain() {
+func CallToMain2() {
 	task_id := 1
 	sub_task_id := 2
 
@@ -44,5 +44,5 @@ func CallToMain() {
 	}
 
 	fmt.Println("Waiting for goroutines to complete...")
-	fmt.Scanln()
+	// fmt.Scanln()
 }

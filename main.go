@@ -65,6 +65,7 @@ package main
 
 import (
 	"fmt"
+	"net/http"
 	"sync"
 	"time"
 )
@@ -89,6 +90,10 @@ func HandleProjectManagerDashboardInfoByProjectID(projectID int) {
 }
 
 func main() {
+	CallToMain2()
+}
+
+func CallToMain1() {
 	// Simulate concurrent requests to the function with the same project ID
 	projectID := 1
 	for i := 1; i <= 2; i++ {
@@ -102,4 +107,31 @@ func main() {
 
 	// Wait for all goroutines to finish
 	time.Sleep(5 * time.Second)
+}
+func Create_multiple_request() {
+	numRequests := 100
+	url := "http://localhost:2020/testCritical/494"
+	var wg sync.WaitGroup
+
+	for i := 0; i < numRequests; i++ {
+		wg.Add(1)
+		go sendRequest(url, &wg)
+	}
+
+	// Wait for all the requests to complete.
+	wg.Wait()
+}
+
+func sendRequest(url string, wg *sync.WaitGroup) {
+	defer wg.Done()
+
+	// Create a new HTTP request.
+	response, err := http.Get(url)
+	if err != nil {
+		fmt.Printf("Error sending request to %s: %v\n", url, err)
+		return
+	}
+	defer response.Body.Close()
+
+	fmt.Printf("Response from %s: %s\n", url, response.Status)
 }
